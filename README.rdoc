@@ -1,0 +1,27 @@
+== Description
+
+YAML configuration file manager.
+
+== Features
+
+Searches for first match in multiple directories for configuration file
+Allows for dynamically updated or static config files
+
+== Example
+
+require 'blackrat_yaml_config'
+class Dummy
+  include YAMLConfig
+  config_directories :etc=>['~/.dummy','/opt/dummy/config','/etc/default/dummy','/etc']
+  static_config_files :dummy, :another_yaml_file
+  dynamic_config_files :yet_another_yaml_file
+
+  def use_config
+    some_method(Dummy.dummy[:key])
+    another_method(Dummy.yet_another_yaml_file[:another_key])
+  end
+end
+
+== Todo
+
+Allow for different keys to be stored in files in different subdirectories to allow for overridable defaults

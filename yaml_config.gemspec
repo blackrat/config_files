@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name        = 'yaml_config'
+  s.name        = 'blackrat_yaml_config'
   s.version     = '0.0.1'
   s.date        = '2012-11-11'
   s.summary     = 'Yaml Configuration Manager'
