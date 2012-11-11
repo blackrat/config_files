@@ -26,7 +26,7 @@ module YAMLConfig
       self.directories||={ :etc => ['etc', '/etc'] }
       arr.each do |directory_list|
         directory_list.each do |key, value|
-          self.directories[key]=value
+          self.directories[key]=value.map { |dir| File.expand_path(dir) }
           meta_def("#{key}_dir") { @directories[key] }
         end
       end
