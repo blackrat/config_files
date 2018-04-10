@@ -1,8 +1,8 @@
 $:.push(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'test/unit'
-require 'yaml_config'
+require 'minitest/autorun'
+require 'config_files'
 class Dummy
-  include YAMLConfig
+  include ConfigFiles
   config_directories :etc => ['etc', 'nofiles/etc']
   config_files :dummy, :broken
 end
@@ -20,36 +20,36 @@ class Dummy2 < Dummy
   end
 end
 
-class YAMLConfigTest < Test::Unit::TestCase
+class YAMLConfigTest < MiniTest::Test
   def test_yaml_extension
-    assert_equal(Dummy.yaml_extension, '.yml')
+    assert_equal('.yml', Dummy.yaml_extension)
   end
 
   def test_config_key
-    assert_equal(Dummy.config_key, :etc)
+    assert_equal(:etc, Dummy.config_key)
   end
 
   def test_directory_is_initialized
-    assert_not_nil(Dummy.directories)
+    assert(Dummy.directories)
   end
 
   def test_has_created_methods
-    assert_not_nil(Dummy.etc_dir)
+    assert(Dummy.etc_dir)
   end
 
   def test_created_paths_for_directories
-    assert_equal(Dummy.etc_dir, ['etc', 'nofiles/etc'])
+    assert_equal([File.join(__dir__, 'etc'), File.join(__dir__, 'nofiles/etc')], Dummy.etc_dir)
   end
 
   def test_created_variables
-    assert_equal(Dummy.dummy[:config_test], 'test')
+    assert_equal('test', Dummy.dummy[:config_test])
   end
 
   def test_raise_for_missing_files
-    assert_raise(Errno::ENOENT) { Dummy.broken }
+    assert_raises(Errno::ENOENT) { Dummy.broken }
   end
 
   def test_yaml_and_config_override
-    assert_equal(Dummy2.dummy[:config_test], 'test2')
+    assert_equal('test2', Dummy2.dummy[:config_test])
   end
 end

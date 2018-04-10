@@ -1,6 +1,6 @@
 require 'meta'
 require 'yaml'
-module YAMLConfig
+module ConfigFiles
 
   class << self
     def included(base)
