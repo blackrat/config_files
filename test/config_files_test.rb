@@ -4,27 +4,19 @@ require 'config_files'
 class Dummy
   include ConfigFiles
   config_directories :etc => ['etc', 'nofiles/etc']
-  config_files :dummy, :broken
+  static_config_files :dummy, :broken
 end
 
 class Dummy2 < Dummy
   config_directories 'config' => ['etc', 'nofiles/etc']
   class << self
-    def yaml_extension
-      ".conf"
-    end
-
     def config_key
       "config"
     end
   end
 end
 
-class YAMLConfigTest < MiniTest::Test
-  def test_yaml_extension
-    assert_equal('.yml', Dummy.yaml_extension)
-  end
-
+class ConfigFilesTest < MiniTest::Test
   def test_config_key
     assert_equal(:etc, Dummy.config_key)
   end
@@ -45,11 +37,11 @@ class YAMLConfigTest < MiniTest::Test
     assert_equal('test', Dummy.dummy[:config_test])
   end
 
-  def test_raise_for_missing_files
-    assert_raises(Errno::ENOENT) { Dummy.broken }
+  def test_empty_for_missing_files
+    assert_equal({}, Dummy.broken.to_h)
   end
 
   def test_yaml_and_config_override
-    assert_equal('test2', Dummy2.dummy[:config_test])
+    assert_equal('test', Dummy2.dummy[:config_test])
   end
 end

@@ -1,1 +1,2 @@
 :config_test: test
+:only_in_yaml: yaml_file

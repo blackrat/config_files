@@ -1,18 +1,19 @@
-== Description
+*Description*
 
-YAML configuration file manager.
+Since it no longer just deals with yaml files as an input, *blackrat_yaml_config* has been renamed to *config_files*
+Configuration file manager.
 
-== Features
+*Features*
 
 Searches for first match in multiple directories for configuration file
 Allows for dynamically updated or static config files
 
-== Example
+*Example*
 
-  require 'blackrat_yaml_config'
+    require 'config_files'
 
     class Dummy
-      include YAMLConfig #mixin the config_directories and config_files generators
+      include ConfigFiles #mixin the config_directories and config_files generators
 
       #search directories (in order). The system will search for the file in the following directories
       config_directories :etc=>['~/.dummy','/opt/dummy/config','/etc/default/dummy','/etc']
@@ -32,6 +33,6 @@ Allows for dynamically updated or static config files
 
 
 
-== Todo
+*Todo*
 
 Allow for different keys to be stored in files in different subdirectories to allow for overridable defaults

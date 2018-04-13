@@ -1,3 +1,9 @@
+require 'config_files/file_factory'
+require 'config_files/loader_factory'
+require 'config_files/loaders'
+require 'config_files/version'
+require 'active_support/core_ext/hash/deep_merge'
+
 require 'meta'
 require 'yaml'
 module ConfigFiles
@@ -14,8 +20,8 @@ module ConfigFiles
     include Meta
     attr_accessor :directories
 
-    def yaml_extension
-      '.yml'
+    def any_extension
+      '*'
     end
 
     def config_key
@@ -32,16 +38,24 @@ module ConfigFiles
       end
     end
 
+    def merged_hash(file)
+      config_files(file).inject({}) { |master, file|  master.deep_merge(FileFactory.(file)) }
+    end
+
+    def build_combined(file)
+      JSON.parse(merged_hash(file).to_json, object_class: OpenStruct)
+    end
+
     def static_config_files(*arr)
       arr.each do |file|
-        content=YAML.load_file(config_file(file))
+        content=build_combined(file)
         meta_def(file) { content }
       end
     end
 
     def dynamic_config_files(*arr)
       arr.each do |file|
-        meta_def(file) { YAML.load_file(config_file(file)) }
+        meta_def(file) { build_combined(file) }
       end
     end
 
@@ -49,13 +63,15 @@ module ConfigFiles
 
     private
     def first_directory(file, key=config_key)
-      self.directories[key].find { |directory|
-        File.exists?(File.join(directory, "#{file}#{yaml_extension}"))
-      } || (raise Errno::ENOENT, "No #{file}#{yaml_extension} in #{self.directories[key]}")
+      self.directories[key]&.detect { |directory| Dir.glob(File.join(directory, "#{file}.*")) } || (raise Errno::ENOENT, "No #{file}.* in #{self.directories[key]}")
     end
 
-    def config_file(file, key=config_key)
-      File.join(first_directory(file, key), "#{file}#{yaml_extension}")
+    def files(file, key=config_key)
+      Dir.glob(File.join(first_directory(file, key), "#{file}.*"))
+    end
+
+    def config_files(file, key=config_key)
+      files(file, key)
     end
   end
 end
