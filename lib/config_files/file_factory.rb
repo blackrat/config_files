@@ -8,7 +8,7 @@ module ConfigFiles
 
       public
       def call(file_name, options={})
-        loader(file_name, options).(file_name, object_class: ::Hash)
+        loader(file_name, options).(file_name)
       end
     end
   end

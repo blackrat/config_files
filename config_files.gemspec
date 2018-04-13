@@ -17,7 +17,7 @@ SUMMARY
   spec.name        = 'config_files'
   spec.require_paths = ['lib']
   spec.version     = ConfigFiles::VERSION
-  spec.license     = 'MIT License'
+  spec.license     = 'MIT'
   spec.date        = '2012-11-11'
 
   spec.add_dependency 'activesupport'

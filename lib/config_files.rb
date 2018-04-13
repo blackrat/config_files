@@ -43,7 +43,7 @@ module ConfigFiles
     end
 
     def build_combined(file)
-      JSON.parse(merged_hash(file).to_json, object_class: OpenStruct)
+      merged_hash(file)
     end
 
     def static_config_files(*arr)
