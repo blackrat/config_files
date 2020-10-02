@@ -20,6 +20,6 @@ SUMMARY
   spec.license     = 'MIT'
   spec.date        = '2012-11-11'
 
-  spec.add_dependency 'activesupport'
+  spec.add_runtime_dependency 'activesupport', '>=2.2.1'
   spec.add_development_dependency 'rake'
 end
