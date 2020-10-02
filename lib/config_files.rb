@@ -3,6 +3,7 @@ require 'config_files/loader_factory'
 require 'config_files/loaders'
 require 'config_files/version'
 require 'active_support/core_ext/hash/deep_merge'
+require 'active_support/core_ext/object/blank'
 
 require 'meta'
 require 'yaml'
@@ -29,10 +30,10 @@ module ConfigFiles
     end
 
     def config_directories(*arr)
-      self.directories||={ :etc => ['etc', '/etc'] }
+      self.directories||={ :etc => ['config', 'etc', '/etc'] }
       arr.each do |directory_list|
         directory_list.each do |key, value|
-          self.directories[key]=value.map { |dir| File.expand_path(dir) }
+          self.directories[key]=value.map { |dir| ::File.expand_path(dir) }
           meta_def("#{key}_dir") { @directories[key] }
         end
       end
@@ -62,12 +63,16 @@ module ConfigFiles
     alias_method :config_files, :dynamic_config_files
 
     private
+    def directory_listing(directory, file)
+      ::Dir.glob(::File.join(directory, "#{file}.*"))
+    end
+
     def first_directory(file, key=config_key)
-      self.directories[key]&.detect { |directory| Dir.glob(File.join(directory, "#{file}.*")) } || (raise Errno::ENOENT, "No #{file}.* in #{self.directories[key]}")
+      self.directories[key]&.detect { |directory| directory_listing(directory, file).presence } || ''
     end
 
     def files(file, key=config_key)
-      Dir.glob(File.join(first_directory(file, key), "#{file}.*"))
+      directory_listing(first_directory(file, key), file)
     end
 
     def config_files(file, key=config_key)

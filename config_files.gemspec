@@ -21,4 +21,5 @@ SUMMARY
   spec.date        = '2012-11-11'
 
   spec.add_dependency 'activesupport'
+  spec.add_development_dependency 'rake'
 end

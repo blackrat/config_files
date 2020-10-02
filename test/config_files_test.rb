@@ -38,7 +38,7 @@ class ConfigFilesTest < MiniTest::Test
   end
 
   def test_empty_for_missing_files
-    assert_equal({}, Dummy.broken.to_h)
+    assert_equal({}, Dummy.broken)
   end
 
   def test_yaml_and_config_override
