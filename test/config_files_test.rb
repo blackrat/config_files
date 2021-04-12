@@ -16,6 +16,11 @@ class Dummy2 < Dummy
   end
 end
 
+class Defaults
+  include ConfigFiles
+  static_config_files :dummy
+end
+
 class ConfigFilesTest < MiniTest::Test
   def test_config_key
     assert_equal(:etc, Dummy.config_key)
@@ -43,5 +48,9 @@ class ConfigFilesTest < MiniTest::Test
 
   def test_yaml_and_config_override
     assert_equal('test', Dummy2.dummy[:config_test])
+  end
+
+  def test_defaults_are_picked_up_when_no_directories_used
+    assert_equal('test', Defaults.dummy[:config_test])
   end
 end

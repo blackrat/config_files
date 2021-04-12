@@ -7,19 +7,27 @@ require 'active_support/core_ext/object/blank'
 
 require 'meta'
 require 'yaml'
+
+class NoDirectoryEntry < NoMethodError; end
 module ConfigFiles
 
   class << self
     def included(base)
       base.class_eval do
-        extend ClassMethods
+        extend ConfigFilesClassMethods
       end
     end
   end
 
-  module ClassMethods
+  module ConfigFilesClassMethods
     include Meta
     attr_accessor :directories
+
+    def self.extended(base)
+      base.instance_eval do
+        self.directories=default_directories
+      end
+    end
 
     def any_extension
       '*'
@@ -29,8 +37,12 @@ module ConfigFiles
       :etc
     end
 
+    def default_directories
+      { :etc => ['config', 'etc', '/etc'] }
+    end
+
     def config_directories(*arr)
-      self.directories||={ :etc => ['config', 'etc', '/etc'] }
+      self.directories||=default_directories
       arr.each do |directory_list|
         directory_list.each do |key, value|
           self.directories[key]=value.map { |dir| ::File.expand_path(dir) }
@@ -68,7 +80,11 @@ module ConfigFiles
     end
 
     def first_directory(file, key=config_key)
-      self.directories[key]&.detect { |directory| directory_listing(directory, file).presence } || ''
+      begin
+        self.directories[key]&.detect { |directory| directory_listing(directory, file).presence } || ''
+      rescue NoMethodError=>e
+        raise NoDirectoryEntry, "Unable to find #{key} in #{self.directories}"
+      end
     end
 
     def files(file, key=config_key)
