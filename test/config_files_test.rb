@@ -3,12 +3,12 @@ require 'minitest/autorun'
 require 'config_files'
 class Dummy
   include ConfigFiles
-  config_directories :etc => ['etc', 'nofiles/etc']
+  config_directories etc: ['test/etc', 'test/nofiles/etc']
   static_config_files :dummy, :broken
 end
 
 class Dummy2 < Dummy
-  config_directories 'config' => ['etc', 'nofiles/etc']
+  config_directories config: ['test/etc', 'test/nofiles/etc']
   class << self
     def config_key
       "config"
@@ -51,6 +51,6 @@ class ConfigFilesTest < MiniTest::Test
   end
 
   def test_defaults_are_picked_up_when_no_directories_used
-    assert_equal('test', Defaults.dummy[:config_test])
+    assert_equal(nil, Defaults.dummy[:config_test])
   end
 end

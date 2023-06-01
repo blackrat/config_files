@@ -2,6 +2,7 @@ require 'config_files/file_factory'
 require 'config_files/loader_factory'
 require 'config_files/loaders'
 require 'config_files/version'
+require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/hash/deep_merge'
 require 'active_support/core_ext/object/blank'
 
@@ -52,7 +53,7 @@ module ConfigFiles
     end
 
     def merged_hash(file)
-      config_files(file).inject({}) { |master, file|  master.deep_merge(FileFactory.(file)) }
+      config_files(file).inject(::HashWithIndifferentAccess.new) { |master, file|  master.deep_merge(FileFactory.(file)) }
     end
 
     def build_combined(file)
