@@ -77,7 +77,7 @@ module ConfigFiles
 
     private
     def directory_listing(directory, file)
-      ::Dir.glob(::File.join(directory, "#{file}.*"))
+      ::Dir.glob(::File.join(directory, "#{file}.*")).sort
     end
 
     def first_directory(file, key=config_key)
