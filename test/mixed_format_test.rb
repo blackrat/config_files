@@ -80,9 +80,9 @@ class MixedFormatTest < Minitest::Test
     assert config.key?(:final_yaml), "Should have YAML value from dir3"
     assert config.key?(:final_json), "Should have JSON value from dir3"
     
-    # Test deep merging across formats
+    # Test deep merging across formats with dir1 taking precedence
     assert config[:database], "Should have database config"
-    assert_equal 'final-yaml-host', config[:database][:host], "YAML from dir3 should override JSON from dir3 (alphabetical order)"
+    assert_equal 'yaml-host', config[:database][:host], "Host should be from dir1 (highest priority)"
     assert_equal 5432, config[:database][:port], "Port should come from YAML in dir1"
     assert_equal 'json-user', config[:database][:username], "Username should come from JSON in dir2"
     assert_equal 'secret', config[:database][:password], "Password should come from YAML in dir3"
@@ -90,9 +90,10 @@ class MixedFormatTest < Minitest::Test
     
     # Test app config merging
     assert config[:app], "Should have app config"
-    assert_equal 'production', config[:app][:environment], "Environment should come from JSON in dir3"
-    assert_equal true, config[:app][:debug], "Debug should be overridden by YAML in dir3"
+    assert_equal 'yaml-app', config[:app][:name], "Name should be from dir1 (highest priority)"
+    assert_equal false, config[:app][:debug], "Debug should be from dir1 (highest priority)"
     assert_equal '1.0.0', config[:app][:version], "Version should come from JSON in dir2"
+    assert_equal 'production', config[:app][:environment], "Environment should come from JSON in dir3"
   end
   
   def test_multiple_files_same_directory_same_format

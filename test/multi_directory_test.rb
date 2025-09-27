@@ -43,51 +43,51 @@ class MultiDirectoryTest < Minitest::Test
     assert config.key?(:only_in_local), "Should have only_in_local from local dir"
   end
 
-  def test_later_directories_override_earlier_ones
+  def test_earlier_directories_override_later_ones
     config = MultiDirectoryDummy.dummy
     
-    # config_test should be overridden by local directory (last in list)
-    assert_equal 'local_override', config[:config_test]
+    # config_test should be from config directory (first in list)
+    assert_equal 'config_dir_value', config[:config_test]
     
-    # shared_key should also be overridden by local directory
-    assert_equal 'from_local', config[:shared_key]
+    # shared_key should also be from config directory (first in list)
+    assert_equal 'from_config', config[:shared_key]
   end
 
   def test_deep_merge_behavior_for_nested_hashes
     config = MultiDirectoryDummy.dummy
     
-    # Database config should be deep merged
+    # Database config should be deep merged with config dir taking precedence
     assert config[:database], "Should have database config"
-    assert_equal 'localhost', config[:database][:host], "Host should be overridden by local"
+    assert_equal 'config.example.com', config[:database][:host], "Host should be from config dir (highest priority)"
     assert_equal 5432, config[:database][:port], "Port should come from config dir"
-    assert_equal 'local_user', config[:database][:username], "Username should come from local dir"
+    assert_equal 'local_user', config[:database][:username], "Username should come from local dir (only place it exists)"
   end
 
   def test_json_files_are_also_merged_across_directories
     config = MultiDirectoryDummy.dummy
     
-    # API config should be deep merged from JSON files
+    # API config should be deep merged from JSON files with config dir taking precedence
     assert config[:api], "Should have API config from JSON files"
-    assert_equal 'https://localhost:3000', config[:api][:endpoint], "Endpoint should be overridden by local"
+    assert_equal 'https://api.config.com', config[:api][:endpoint], "Endpoint should be from config dir (highest priority)"
     assert_equal 30, config[:api][:timeout], "Timeout should come from config dir"
-    assert_equal true, config[:api][:debug], "Debug should come from local dir"
+    assert_equal true, config[:api][:debug], "Debug should come from local dir (only place it exists)"
   end
 
   def test_array_values_in_nested_structures_are_merged
     config = MultiDirectoryDummy.dummy
     
-    # Features should be merged
+    # Features should be merged with config dir taking precedence
     assert config[:features], "Should have features config"
     assert_equal true, config[:features][:feature_a], "feature_a should come from config dir"
-    assert_equal true, config[:features][:feature_b], "feature_b should be overridden by local"
-    assert_equal true, config[:features][:feature_c], "feature_c should come from local dir"
+    assert_equal false, config[:features][:feature_b], "feature_b should be from config dir (highest priority)"
+    assert_equal true, config[:features][:feature_c], "feature_c should come from local dir (only place it exists)"
   end
 
   def test_dynamic_config_files_also_work_with_multiple_directories
     config = MultiDirectoryDynamic.dummy
     
     # Should behave the same as static config files
-    assert_equal 'local_override', config[:config_test]
+    assert_equal 'config_dir_value', config[:config_test]
     assert config.key?(:only_in_config)
     assert config.key?(:only_in_yaml)
     assert config.key?(:only_in_local)
