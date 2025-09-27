@@ -22,11 +22,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport', '>= 6.1', '< 8.0'
   spec.add_dependency 'rexml', '~> 3.2'
-  spec.add_development_dependency 'minitest', '~> 5.20'
-  spec.add_development_dependency 'mutex_m'
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rubocop', '~> 1.50'
-  spec.add_development_dependency 'rubocop-minitest', '~> 0.35'
-  spec.add_development_dependency 'rubocop-rake', '~> 0.6'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
