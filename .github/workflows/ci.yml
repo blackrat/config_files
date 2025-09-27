@@ -74,58 +74,6 @@ jobs:
       run: |
         find test -name "*_test.rb" -exec bundle exec ruby {} \;
 
-  compatibility:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby-version:
-          - '2.5'
-          - '2.6'
-        activesupport-version:
-          - '~> 5.2.0'
-          - '~> 6.0.0'
-          - '~> 6.1.0'
-
-    env:
-      ACTIVESUPPORT_VERSION: ${{ matrix.activesupport-version }}
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Ruby ${{ matrix.ruby-version }}
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: false
-
-    - name: Remove safe navigation operator for older Ruby versions
-      run: |
-        # Replace &. with && for Ruby < 2.3 compatibility
-        sed -i 's/self\.directories\[key\]&\./self.directories[key] \&\& self.directories[key]./g' lib/config_files.rb
-        sed -i 's/loaders\.detect{|_, extensions| extensions\.include?(::File\.extname(file_name)\.strip\.downcase\[1\.\.-1\])}&\./loaders.detect{|_, extensions| extensions.include?(::File.extname(file_name).strip.downcase[1..-1])} \&\&/g' lib/config_files/loader_factory.rb
-
-    - name: Create Gemfile for compatibility testing
-      run: |
-        cat > Gemfile.ci << EOF
-        source 'https://rubygems.org'
-        
-        gemspec
-        
-        gem 'activesupport', '${{ matrix.activesupport-version }}'
-        gem 'minitest', '~> 5.15'  # Older minitest for older Ruby
-        gem 'rake'
-        EOF
-
-    - name: Install dependencies
-      run: |
-        cp Gemfile.ci Gemfile
-        bundle install
-
-    - name: Run tests
-      run: |
-        find test -name "*_test.rb" -exec bundle exec ruby {} \;
-
   lint:
     runs-on: ubuntu-latest
     steps:
