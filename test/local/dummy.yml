@@ -1,0 +1,6 @@
+config_test: local_override
+database:
+  host: localhost
+  username: local_user
+only_in_local: local_only
+shared_key: from_local

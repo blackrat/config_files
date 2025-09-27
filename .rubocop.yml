@@ -1,0 +1,81 @@
+AllCops:
+  TargetRubyVersion: 2.7
+  NewCops: enable
+  Exclude:
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'bin/**/*'
+
+plugins:
+  - rubocop-minitest
+  - rubocop-rake
+
+# Allow longer lines for readability
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'test/**/*'
+
+# Allow longer methods in tests
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - 'test/**/*'
+
+# Allow longer classes in tests
+Metrics/ClassLength:
+  Max: 200
+  Exclude:
+    - 'test/**/*'
+
+# Allow longer blocks in tests
+Metrics/BlockLength:
+  Max: 50
+  Exclude:
+    - 'test/**/*'
+    - '*.gemspec'
+
+# Don't require documentation for every class/module
+Style/Documentation:
+  Enabled: false
+
+# Allow both single and double quotes
+Style/StringLiterals:
+  Enabled: false
+
+# Allow trailing commas in multiline structures
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+# Allow compact module/class definitions
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# Allow empty methods
+Style/EmptyMethod:
+  Enabled: false
+
+# Don't require frozen string literals (for compatibility)
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Allow assignment in conditions (common pattern)
+Lint/AssignmentInCondition:
+  Enabled: false
+
+# Allow safe navigation operator
+Style/SafeNavigation:
+  Enabled: true
+
+# Allow multiple assertions in test methods
+Minitest/MultipleAssertions:
+  Exclude:
+    - 'test/**/*'
+
+# Allow high ABC size in test methods
+Metrics/AbcSize:
+  Exclude:
+    - 'test/**/*'

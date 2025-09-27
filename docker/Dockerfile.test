@@ -1,0 +1,32 @@
+ARG RUBY_VERSION=3.3
+FROM ruby:${RUBY_VERSION}-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy gemspec and version file first for better caching
+COPY config_files.gemspec ./
+COPY lib/config_files/version.rb ./lib/config_files/
+
+# Copy Gemfile if it exists
+COPY Gemfile* ./
+
+# Install gems
+ARG ACTIVESUPPORT_VERSION="~> 7.0"
+RUN echo "gem 'activesupport', '${ACTIVESUPPORT_VERSION}'" >> Gemfile.docker && \
+    echo "gem 'minitest', '~> 5.20'" >> Gemfile.docker && \
+    echo "gem 'mutex_m'" >> Gemfile.docker && \
+    echo "gem 'rake'" >> Gemfile.docker && \
+    BUNDLE_GEMFILE=Gemfile.docker bundle install
+
+# Copy the rest of the application
+COPY . .
+
+# Run tests
+CMD ["sh", "-c", "BUNDLE_GEMFILE=Gemfile.docker bundle exec rake test"]

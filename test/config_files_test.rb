@@ -1,4 +1,4 @@
-$:.push(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.push(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'minitest/autorun'
 require 'config_files'
 class Dummy
@@ -43,7 +43,7 @@ class ConfigFilesTest < Minitest::Test
   end
 
   def test_empty_for_missing_files
-    assert_equal({}, Dummy.broken)
+    assert_empty(Dummy.broken)
   end
 
   def test_yaml_and_config_override

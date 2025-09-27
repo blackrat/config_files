@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <global_setting>xml_value</global_setting>
+  <database>
+    <host>xml-db.example.com</host>
+    <port>5432</port>
+    <ssl>true</ssl>
+  </database>
+  <app name="XML App">
+    <debug>false</debug>
+    <version>3.0</version>
+  </app>
+</config>

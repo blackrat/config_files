@@ -1,1 +1,1 @@
-ConfigFiles::Loaders::Default=ConfigFiles::Loaders::Yaml
+ConfigFiles::Loaders::Default = ConfigFiles::Loaders::Yaml

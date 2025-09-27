@@ -1,0 +1,10 @@
+{
+  "api": {
+    "endpoint": "https://localhost:3000",
+    "debug": true
+  },
+  "features": {
+    "feature_b": true,
+    "feature_c": true
+  }
+}

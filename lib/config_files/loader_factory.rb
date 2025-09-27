@@ -1,19 +1,22 @@
 module ConfigFiles
   class LoaderFactory
     class << self
-      public
-      def call(file_name, options={include_default: true})
+      def call(file_name, options = { include_default: true })
         new(options).call(file_name)
       end
     end
 
     private
+
     attr_reader :options
 
     def default_loaders
       {
-        Loaders::Yaml => ['yaml', 'yml'],
-        Loaders::Json =>  ['json']
+        Loaders::Yaml => %w[yaml yml],
+        Loaders::Json => ['json'],
+        Loaders::Conf => ['conf'],
+        Loaders::Ini => ['ini'],
+        Loaders::Xml => ['xml'],
       }
     end
 
@@ -25,7 +28,7 @@ module ConfigFiles
       {
         include_default: true,
         default_loader: Loaders::Yaml,
-        loaders: default_loaders
+        loaders: default_loaders,
       }
     end
 
@@ -37,16 +40,20 @@ module ConfigFiles
       options[:loaders]
     end
 
-    def initialize(options) #Note the check below is necessary, because we only want to do it if it is explicity set
-      @options=default_options.merge(options)
-      if include_default_loaders?
-        @options[:loaders]=default_loaders.merge(loaders)
-      end
+    # Note the check below is necessary, because we only want to do it if it is explicity set
+    def initialize(options)
+      @options = default_options.merge(options)
+      return unless include_default_loaders?
+
+      @options[:loaders] = default_loaders.merge(loaders)
     end
 
     public
+
     def call(file_name)
-      loaders.detect{|_, extensions| extensions.include?(::File.extname(file_name).strip.downcase[1..-1])}&.first || default_loader
+      loaders.detect do |_, extensions|
+        extensions.include?(::File.extname(file_name).strip.downcase[1..])
+      end&.first || default_loader
     end
   end
 end
