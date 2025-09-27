@@ -1,5 +1,2 @@
-/.idea/.gitignore
-/.idea/config_files.iml
-/.idea/misc.xml
-/.idea/modules.xml
-/.idea/vcs.xml
+/.idea
+/Gemfile.lock
