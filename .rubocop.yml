@@ -69,3 +69,13 @@ Lint/AssignmentInCondition:
 # Allow safe navigation operator
 Style/SafeNavigation:
   Enabled: true
+
+# Allow multiple assertions in test methods
+Minitest/MultipleAssertions:
+  Exclude:
+    - 'test/**/*'
+
+# Allow high ABC size in test methods
+Metrics/AbcSize:
+  Exclude:
+    - 'test/**/*'
