@@ -1,78 +1,65 @@
 require 'rexml/document'
+require_relative 'base_parser'
 
 module ConfigFiles
   module Loaders
-    class Xml
+    class Xml < BaseParser
       class << self
-        def call(file_name)
-          content = File.read(file_name)
-          parse_xml(content)
-        end
-
         private
 
-        def parse_xml(content)
+        def parse(content)
           doc = REXML::Document.new(content)
-          result = {}
-
-          # Start parsing from the root element
-          result = parse_element(doc.root) if doc.root
-
-          result
+          doc.root ? parse_element(doc.root) : {}
         end
 
         def parse_element(element)
-          result = {}
+          result = parse_attributes(element)
+          parse_child_elements(element, result)
 
-          # Handle attributes
-          element.attributes.each do |name, value|
-            result["@#{name}"] = parse_value(value)
-          end
-
-          # Handle child elements
-          element.elements.each do |child|
-            key = child.name
-
-            # If there are multiple elements with the same name, create an array
-            if result.key?(key)
-              # Convert to array if not already
-              result[key] = [result[key]] unless result[key].is_a?(Array)
-              result[key] << parse_element(child)
-            elsif child.has_elements?
-              # Check if this element has children or just text
-              result[key] = parse_element(child)
-            else
-              # It's a leaf node, get the text content
-              text = child.text
-              result[key] = text ? parse_value(text.strip) : nil
-            end
-          end
-
-          # If the element has text content and no child elements, return the text
-          return parse_value(element.text.strip) if result.empty? && element.has_text?
+          # Return text content if element has no children or attributes
+          return parse_text_content(element) if result.empty? && element.has_text?
 
           result
         end
 
-        def parse_value(value)
-          return nil if value.nil? || value.empty?
-
-          # Try to parse as boolean
-          case value.downcase
-          when 'true'
-            return true
-          when 'false'
-            return false
+        # Parse element attributes, prefixing with @
+        def parse_attributes(element)
+          result = {}
+          element.attributes.each do |name, value|
+            result["@#{name}"] = parse_value(value)
           end
+          result
+        end
 
-          # Try to parse as integer
-          return value.to_i if value.match(/^\d+$/)
+        # Parse child elements, handling duplicates and nesting
+        def parse_child_elements(element, result)
+          element.elements.each do |child|
+            key = child.name
+            child_value = child.has_elements? ? parse_element(child) : parse_leaf_element(child)
 
-          # Try to parse as float
-          return value.to_f if value.match(/^\d+\.\d+$/)
+            if result.key?(key)
+              result[key] = convert_to_array(result[key])
+              result[key] << child_value
+            else
+              result[key] = child_value
+            end
+          end
+        end
 
-          # Return as string
-          value
+        # Parse leaf element (no child elements)
+        def parse_leaf_element(element)
+          text = element.text
+          text ? parse_value(text.strip) : nil
+        end
+
+        # Parse text content of element
+        def parse_text_content(element)
+          parse_value(element.text.strip)
+        end
+
+        # Convert single value to array for handling multiple elements with same name
+        def convert_to_array(value)
+          value.is_a?(Array) ? value : [value]
         end
       end
     end

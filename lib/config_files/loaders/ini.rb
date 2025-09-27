@@ -1,72 +1,47 @@
+require_relative 'base_parser'
+
 module ConfigFiles
   module Loaders
-    class Ini
+    class Ini < BaseParser
       class << self
-        def call(file_name)
-          content = File.read(file_name)
-          parse_ini(content)
-        end
-
         private
 
-        def parse_ini(content)
+        def parse(content)
           result = {}
           current_section = nil
 
           content.each_line do |line|
             line = line.strip
+            next if skip_line?(line, COMMENT_PREFIXES)
 
-            # Skip empty lines and comments
-            next if line.empty? || line.start_with?('#', ';')
-
-            # Handle sections [section_name]
-            if line.match(/^\[(.+)\]$/)
-              current_section = ::Regexp.last_match(1).strip
-              result[current_section] = {} unless result[current_section]
+            if section_header?(line)
+              current_section = parse_section_header(line)
+              ensure_section(result, current_section)
               next
             end
 
-            # Handle key=value pairs
-            next unless line.include?('=')
+            key, value = parse_ini_line(line)
+            next unless key && value
 
-            key, value = line.split('=', 2)
-            key = key.strip
-            value = value.strip
-
-            # Remove quotes if present
-            value = value.gsub(/^["']|["']$/, '')
-
-            # Convert to appropriate type
-            parsed_value = parse_value(value)
-
-            if current_section
-              result[current_section][key] = parsed_value
-            else
-              result[key] = parsed_value
-            end
+            set_value(result, key, value, current_section)
           end
 
           result
         end
 
-        def parse_value(value)
-          # Try to parse as boolean
-          case value.downcase
-          when 'true', 'yes', 'on', '1'
-            return true
-          when 'false', 'no', 'off', '0'
-            return false
-          end
+        # Parse INI format line (key=value only)
+        def parse_ini_line(line)
+          return [nil, nil] unless line.include?('=')
 
-          # Try to parse as integer
-          return value.to_i if value.match(/^\d+$/)
+          key, value = line.split('=', 2)
+          key = key.strip
+          value = unquote(value.strip)
 
-          # Try to parse as float
-          return value.to_f if value.match(/^\d+\.\d+$/)
-
-          # Return as string
-          value
+          [key, value]
         end
+
+        # INI files support both # and ; for comments
+        COMMENT_PREFIXES = ['#', ';'].freeze
       end
     end
   end

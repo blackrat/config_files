@@ -1,108 +1,60 @@
+require_relative 'base_parser'
+
 module ConfigFiles
   module Loaders
-    class Conf
+    class Conf < BaseParser
       class << self
-        def call(file_name)
-          content = File.read(file_name)
-          parse_conf(content)
-        end
-
         private
 
-        def parse_conf(content)
+        def parse(content)
           result = {}
           current_section = nil
 
           content.each_line do |line|
             line = line.strip
+            next if skip_line?(line)
 
-            # Skip empty lines and comments (CONF uses # primarily)
-            next if line.empty? || line.start_with?('#')
-
-            # Handle sections [section_name]
-            if line.match(/^\[(.+)\]$/)
-              current_section = ::Regexp.last_match(1).strip
-              result[current_section] = {} unless result[current_section]
+            if section_header?(line)
+              current_section = parse_section_header(line)
+              ensure_section(result, current_section)
               next
             end
 
-            # Handle multiple CONF syntax styles
             key, value = parse_conf_line(line)
             next unless key && value
 
-            # Handle nested keys (dot notation)
-            if key.include?('.')
-              set_nested_value(result, key, parse_value(value), current_section)
-            else
-              parsed_value = parse_value(value)
-              if current_section
-                result[current_section][key] = parsed_value
-              else
-                result[key] = parsed_value
-              end
-            end
+            set_value(result, key, value, current_section)
           end
 
           result
         end
 
+        # Parse CONF format line supporting multiple syntaxes:
+        # key=value, key: value, key value (space-separated)
         def parse_conf_line(line)
-          # Support multiple CONF syntax styles:
-          # key=value
-          # key: value
-          # key value (space-separated)
-
-          if line.include?('=')
-            key, value = line.split('=', 2)
-          elsif line.include?(':')
-            key, value = line.split(':', 2)
-          elsif line.include?(' ')
-            parts = line.split(' ', 2)
-            key, value = parts if parts.length == 2
-          else
-            return [nil, nil]
-          end
-
+          key, value = extract_key_value_pair(line)
           return [nil, nil] unless key && value
 
           key = key.strip
-          value = value.strip
-
-          # Remove quotes if present
-          value = value.gsub(/^["']|["']$/, '')
+          value = unquote(value.strip)
 
           [key, value]
         end
 
-        def set_nested_value(hash, key_path, value, section = nil)
-          keys = key_path.split('.')
-          target = section ? (hash[section] ||= {}) : hash
-
-          keys[0..-2].each do |key|
-            target = (target[key] ||= {})
+        # Extract key-value pair from line using different separators
+        def extract_key_value_pair(line)
+          SEPARATORS.each do |separator|
+            if line.include?(separator)
+              parts = line.split(separator, 2)
+              return parts if parts.length == 2
+            end
           end
 
-          target[keys.last] = value
+          [nil, nil]
         end
 
-        def parse_value(value)
-          # Try to parse as boolean
-          case value.downcase
-          when 'true', 'yes', 'on', '1'
-            return true
-          when 'false', 'no', 'off', '0'
-            return false
-          end
-
-          # Try to parse as integer
-          return value.to_i if value.match(/^\d+$/)
-
-          # Try to parse as float
-          return value.to_f if value.match(/^\d+\.\d+$/)
-
-          # Return as string
-          value
-        end
+        # Supported key-value separators in order of preference
+        SEPARATORS = ['=', ':', ' '].freeze
       end
     end
   end
