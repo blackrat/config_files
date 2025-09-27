@@ -6,6 +6,10 @@ AllCops:
     - 'tmp/**/*'
     - 'bin/**/*'
 
+plugins:
+  - rubocop-minitest
+  - rubocop-rake
+
 # Allow longer lines for readability
 Layout/LineLength:
   Max: 120
