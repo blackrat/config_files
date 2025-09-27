@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'config_files/version'
@@ -14,13 +16,13 @@ Gem::Specification.new do |spec|
 
   spec.homepage    = 'https://github.com/blackrat/config_files'
   spec.files       = `git ls-files`.split($OUTPUT_RECORD_SEPARATOR)
+  spec.test_files  = spec.files.grep(%r{^(test|spec|features)/})
   spec.name        = 'config_files'
   spec.require_paths = ['lib']
   spec.version     = ConfigFiles::VERSION
   spec.license     = 'MIT'
+
   spec.required_ruby_version = '>= 2.7.0'
 
-  spec.add_dependency 'activesupport', '>= 6.1', '< 8.0'
-  spec.add_dependency 'rexml', '~> 3.2'
-  spec.metadata['rubygems_mfa_required'] = 'true'
+  spec.add_runtime_dependency 'activesupport', '~> 7.0', '>= 7.0.0'
 end
