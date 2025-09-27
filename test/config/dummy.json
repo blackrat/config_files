@@ -1,0 +1,10 @@
+{
+  "api": {
+    "endpoint": "https://api.config.com",
+    "timeout": 30
+  },
+  "features": {
+    "feature_a": true,
+    "feature_b": false
+  }
+}
