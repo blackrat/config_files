@@ -16,7 +16,6 @@ Gem::Specification.new do |spec|
 
   spec.homepage    = 'https://github.com/blackrat/config_files'
   spec.files       = `git ls-files`.split($OUTPUT_RECORD_SEPARATOR)
-  spec.test_files  = spec.files.grep(%r{^(test|spec|features)/})
   spec.name        = 'config_files'
   spec.require_paths = ['lib']
   spec.version     = ConfigFiles::VERSION
@@ -24,5 +23,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.7.0'
 
-  spec.add_runtime_dependency 'activesupport', '~> 7.0', '>= 7.0.0'
+  spec.add_dependency 'activesupport', '~> 7.0', '>= 7.0.0'
+  spec.add_dependency 'rexml', '~> 3.2', '>= 3.2.0'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

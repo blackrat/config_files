@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 $LOAD_PATH.push(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'minitest/autorun'
 require 'config_files'
@@ -11,7 +13,7 @@ class Dummy2 < Dummy
   config_directories config: ['test/etc', 'test/nofiles/etc']
   class << self
     def config_key
-      "config"
+      'config'
     end
   end
 end
