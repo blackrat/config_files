@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # @author Paul McKibbin based on meta definitions by _why_the_lucky_stiff_
 module Meta
   def meta_self

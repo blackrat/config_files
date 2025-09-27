@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'loaders/json'
 require_relative 'loaders/yaml'
 require_relative 'loaders/conf'

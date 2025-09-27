@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ConfigFiles
   module Loaders
     class Yaml
