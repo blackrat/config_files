@@ -99,14 +99,17 @@ module ConfigFiles
     def all_config_files(file, key=config_key)
       return [] unless self.directories && self.directories[key]
       
-      all_files = []
+      # Collect files by directory, maintaining alphabetical order within each directory
+      files_by_directory = []
       self.directories[key].each do |directory|
         if ::File.directory?(directory)
           directory_files = directory_listing(directory, file)
-          all_files.concat(directory_files)
+          files_by_directory << directory_files if directory_files.any?
         end
       end
-      all_files
+      
+      # Reverse directory order but keep file order within each directory
+      files_by_directory.reverse.flatten
     end
   end
 end
