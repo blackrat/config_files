@@ -21,8 +21,8 @@ module ConfigFiles
           return value if value.empty?
 
           # Try to parse as boolean
-          boolean_value = parse_boolean(value)
-          return boolean_value unless boolean_value.nil?
+          boolean_result = boolean_value?(value)
+          return boolean_result unless boolean_result.nil?
 
           # Try to parse as number
           number_value = parse_number(value)
@@ -33,14 +33,12 @@ module ConfigFiles
         end
 
         # Parse boolean values with common representations
-        def parse_boolean(value)
+        def boolean_value?(value)
           case value.downcase
           when 'true', 'yes', 'on', '1'
             true
           when 'false', 'no', 'off', '0'
             false
-          else
-            nil
           end
         end
 
@@ -48,6 +46,7 @@ module ConfigFiles
         def parse_number(value)
           return value.to_i if integer?(value)
           return value.to_f if float?(value)
+
           nil
         end
 

@@ -3,6 +3,9 @@ require_relative 'base_parser'
 module ConfigFiles
   module Loaders
     class Ini < BaseParser
+      # INI files support both # and ; for comments
+      COMMENT_PREFIXES = ['#', ';'].freeze
+
       class << self
         private
 
@@ -39,9 +42,6 @@ module ConfigFiles
 
           [key, value]
         end
-
-        # INI files support both # and ; for comments
-        COMMENT_PREFIXES = ['#', ';'].freeze
       end
     end
   end

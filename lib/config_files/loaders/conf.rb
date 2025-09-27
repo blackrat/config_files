@@ -3,6 +3,9 @@ require_relative 'base_parser'
 module ConfigFiles
   module Loaders
     class Conf < BaseParser
+      # Supported key-value separators in order of preference
+      SEPARATORS = ['=', ':', ' '].freeze
+
       class << self
         private
 
@@ -52,9 +55,6 @@ module ConfigFiles
 
           [nil, nil]
         end
-
-        # Supported key-value separators in order of preference
-        SEPARATORS = ['=', ':', ' '].freeze
       end
     end
   end
