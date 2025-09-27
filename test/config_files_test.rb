@@ -21,7 +21,7 @@ class Defaults
   static_config_files :dummy
 end
 
-class ConfigFilesTest < MiniTest::Test
+class ConfigFilesTest < Minitest::Test
   def test_config_key
     assert_equal(:etc, Dummy.config_key)
   end
@@ -51,6 +51,6 @@ class ConfigFilesTest < MiniTest::Test
   end
 
   def test_defaults_are_picked_up_when_no_directories_used
-    assert_equal(nil, Defaults.dummy[:config_test])
+    assert_nil(Defaults.dummy[:config_test])
   end
 end
