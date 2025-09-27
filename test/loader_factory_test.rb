@@ -9,7 +9,7 @@ class LoaderFactoryDummy
   end
 end
 
-class LoaderFactoryTest < MiniTest::Test
+class LoaderFactoryTest < Minitest::Test
   def file_locations
     File.join(__dir__, 'etc')
   end
