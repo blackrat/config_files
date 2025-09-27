@@ -10,8 +10,8 @@ require 'meta'
 require 'yaml'
 
 class NoDirectoryEntry < NoMethodError; end
-module ConfigFiles
 
+module ConfigFiles
   class << self
     def included(base)
       base.class_eval do
@@ -26,7 +26,7 @@ module ConfigFiles
 
     def self.extended(base)
       base.instance_eval do
-        self.directories=default_directories
+        self.directories = default_directories
       end
     end
 
@@ -39,21 +39,23 @@ module ConfigFiles
     end
 
     def default_directories
-      { :etc => ['config', 'etc', '/etc'] }
+      { etc: ['config', 'etc', '/etc'] }
     end
 
     def config_directories(*arr)
-      self.directories||=default_directories
+      self.directories ||= default_directories
       arr.each do |directory_list|
         directory_list.each do |key, value|
-          self.directories[key]=value.map { |dir| ::File.expand_path(dir) }
+          self.directories[key] = value.map { |dir| ::File.expand_path(dir) }
           meta_def("#{key}_dir") { @directories[key] }
         end
       end
     end
 
     def merged_hash(file)
-      all_config_files(file).inject(::HashWithIndifferentAccess.new) { |master, file|  master.deep_merge(FileFactory.(file)) }
+      all_config_files(file).inject(::HashWithIndifferentAccess.new) do |master, file|
+        master.deep_merge(FileFactory.call(file))
+      end
     end
 
     def build_combined(file)
@@ -62,7 +64,7 @@ module ConfigFiles
 
     def static_config_files(*arr)
       arr.each do |file|
-        content=build_combined(file)
+        content = build_combined(file)
         meta_def(file) { content }
       end
     end
@@ -73,28 +75,27 @@ module ConfigFiles
       end
     end
 
-    alias_method :config_files, :dynamic_config_files
+    alias config_files dynamic_config_files
 
     private
+
     def directory_listing(directory, file)
       ::Dir.glob(::File.join(directory, "#{file}.*")).sort
     end
 
-    def first_directory(file, key=config_key)
-      begin
-        self.directories[key]&.detect { |directory| directory_listing(directory, file).presence } || ''
-      rescue NoMethodError=>e
-        raise NoDirectoryEntry, "Unable to find #{key} in #{self.directories}"
-      end
+    def first_directory(file, key = config_key)
+      self.directories[key]&.detect { |directory| directory_listing(directory, file).presence } || ''
+    rescue NoMethodError
+      raise NoDirectoryEntry, "Unable to find #{key} in #{self.directories}"
     end
 
-    def files(file, key=config_key)
+    def files(file, key = config_key)
       directory_listing(first_directory(file, key), file)
     end
 
-    def all_config_files(file, key=config_key)
+    def all_config_files(file, key = config_key)
       return [] unless self.directories && self.directories[key]
-      
+
       # Collect files by directory, maintaining alphabetical order within each directory
       files_by_directory = []
       self.directories[key].each do |directory|
@@ -103,7 +104,7 @@ module ConfigFiles
           files_by_directory << directory_files if directory_files.any?
         end
       end
-      
+
       # Reverse directory order but keep file order within each directory
       files_by_directory.reverse.flatten
     end

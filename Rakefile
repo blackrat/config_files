@@ -23,7 +23,7 @@ end
 
 desc "Clean up test artifacts"
 task :clean do
-  FileUtils.rm_rf('test/format_test') if Dir.exist?('test/format_test')
-  FileUtils.rm_rf('test/comprehensive') if Dir.exist?('test/comprehensive')
-  FileUtils.rm_rf('test/order_test') if Dir.exist?('test/order_test')
+  FileUtils.rm_rf('test/format_test')
+  FileUtils.rm_rf('test/comprehensive')
+  FileUtils.rm_rf('test/order_test')
 end

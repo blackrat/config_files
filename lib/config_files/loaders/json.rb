@@ -5,7 +5,7 @@ module ConfigFiles
     class Json
       class << self
         def call(file_name, object_class: ::Hash)
-          ::JSON.load(::File.open(file_name), nil, {object_class: object_class, quirks_mode: true})
+          ::JSON.parse(::File.open(file_name), nil, { object_class: object_class, quirks_mode: true })
         end
       end
     end
