@@ -92,10 +92,6 @@ module ConfigFiles
       directory_listing(first_directory(file, key), file)
     end
 
-    def config_files(file, key=config_key)
-      files(file, key)
-    end
-
     def all_config_files(file, key=config_key)
       return [] unless self.directories && self.directories[key]
       
