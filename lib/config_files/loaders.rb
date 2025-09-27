@@ -1,3 +1,6 @@
 require_relative 'loaders/json'
 require_relative 'loaders/yaml'
+require_relative 'loaders/conf'
+require_relative 'loaders/ini'
+require_relative 'loaders/xml'
 require_relative 'loaders/default'

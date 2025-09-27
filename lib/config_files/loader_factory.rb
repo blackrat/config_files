@@ -13,7 +13,10 @@ module ConfigFiles
     def default_loaders
       {
         Loaders::Yaml => ['yaml', 'yml'],
-        Loaders::Json =>  ['json']
+        Loaders::Json => ['json'],
+        Loaders::Conf => ['conf'],
+        Loaders::Ini => ['ini'],
+        Loaders::Xml => ['xml']
       }
     end
 
