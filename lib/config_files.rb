@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'config_files/file_factory'
 require 'config_files/loader_factory'
 require 'config_files/loaders'

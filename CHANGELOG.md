@@ -5,9 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.0] - 2024-12-26
+## [0.2.1] - 2025-09-27
+
+### Fixed
+- Incorrect active_support dependency version range
+
+## [0.2.0] - 2025-09-27 (yanked due to issue installing active_support versions. Use 0.2.1 instead)
 
 ### Added
+- Support for xml, conf and ini files in addition to the yaml and json formats 
 - Multi-directory configuration support - load and merge configs from multiple directories
 - Directory precedence system - earlier directories override later ones
 - Mixed file format support - YAML, JSON, and other formats in the same project
