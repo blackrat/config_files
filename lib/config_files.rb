@@ -53,7 +53,7 @@ module ConfigFiles
     end
 
     def merged_hash(file)
-      config_files(file).inject(::HashWithIndifferentAccess.new) { |master, file|  master.deep_merge(FileFactory.(file)) }
+      all_config_files(file).inject(::HashWithIndifferentAccess.new) { |master, file|  master.deep_merge(FileFactory.(file)) }
     end
 
     def build_combined(file)
@@ -94,6 +94,19 @@ module ConfigFiles
 
     def config_files(file, key=config_key)
       files(file, key)
+    end
+
+    def all_config_files(file, key=config_key)
+      return [] unless self.directories && self.directories[key]
+      
+      all_files = []
+      self.directories[key].each do |directory|
+        if ::File.directory?(directory)
+          directory_files = directory_listing(directory, file)
+          all_files.concat(directory_files)
+        end
+      end
+      all_files
     end
   end
 end
